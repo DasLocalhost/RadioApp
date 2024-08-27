@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34928.147
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RadioApp", "RadioApp\RadioApp.csproj", "{6A2B32AD-D537-4C19-B8C8-152060B07BFB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RadioConsole", "RadioConsole\RadioConsole.csproj", "{5F3946AD-35E1-422B-9EA9-C2500014AA3E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RadioLib", "RadioLib\RadioLib.csproj", "{7AC7ED97-E6F3-49A3-843A-F22FDDE0B298}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A2B32AD-D537-4C19-B8C8-152060B07BFB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A2B32AD-D537-4C19-B8C8-152060B07BFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A2B32AD-D537-4C19-B8C8-152060B07BFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A2B32AD-D537-4C19-B8C8-152060B07BFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F3946AD-35E1-422B-9EA9-C2500014AA3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F3946AD-35E1-422B-9EA9-C2500014AA3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F3946AD-35E1-422B-9EA9-C2500014AA3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F3946AD-35E1-422B-9EA9-C2500014AA3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7AC7ED97-E6F3-49A3-843A-F22FDDE0B298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7AC7ED97-E6F3-49A3-843A-F22FDDE0B298}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7AC7ED97-E6F3-49A3-843A-F22FDDE0B298}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7AC7ED97-E6F3-49A3-843A-F22FDDE0B298}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6F6F160A-58EE-4ADC-8CD8-2850AE8E3A4C}
+	EndGlobalSection
+EndGlobal

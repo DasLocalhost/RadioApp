@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="100mm"
+   height="3mm"
+   viewBox="0 0 100 3"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="horizontal_line.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.4627806"
+     inkscape:cx="142.53676"
+     inkscape:cy="116.55883"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Шар 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       d="M 100,0.55777943 C 99.954643,-0.03411535 97.887204,0.05378244 97.048324,0.15231344 82.180251,1.9003531 66.062611,1.1021807 50.837781,0.82643653 34.960312,0.53934929 19.084593,0.25722476 3.2053805,6.1848317e-4 0.9376689,-0.03623976 -1.7007336,1.58633 1.4476101,1.6522536 18.176112,2.0052644 34.908113,2.3292119 51.641859,2.6496143 67.066809,2.9452073 83.313411,3.56275 98.365952,1.8076222"
+       style="stroke-width:0px"
+       id="path1" />
+  </g>
+</svg>

@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="RadioApp.UI.AudioVisualizer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:PresentationOptions = "http://schemas.microsoft.com/winfx/2006/xaml/presentation/options"  
+             xmlns:local="clr-namespace:RadioApp.UI"
+             mc:Ignorable="d" 
+             d:Background="White"
+             d:DesignHeight="200" d:DesignWidth="300">
+    <Grid>
+        <Image x:Name="scene" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        <TextBlock Margin="2" Background="White" Foreground="Black" HorizontalAlignment="Right" VerticalAlignment="Bottom" FontWeight="Black">
+            <Run x:Name="r1" d:Text="10" /> : <Run x:Name="r2" d:Text="10" /> : <Run x:Name="r3" d:Text="10" />
+        </TextBlock>
+    </Grid>
+</UserControl>

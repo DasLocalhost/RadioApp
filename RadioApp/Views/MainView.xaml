@@ -1,0 +1,383 @@
+﻿<UserControl x:Class="RadioApp.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:RadioApp.Views"
+             xmlns:vm="clr-namespace:RadioApp.ViewModels"
+             xmlns:draw="clr-namespace:RadioApp.Draw"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:beh="clr-namespace:RadioApp.Behaviors"
+             xmlns:rlib="clr-namespace:RadioLib.Data;assembly=RadioLib"
+             xmlns:drw="clr-namespace:RadioApp.Draw"
+             xmlns:cnv="clr-namespace:RadioApp.UI.Converters"
+             xmlns:svg="clr-namespace:SharpVectors.Converters;assembly=SharpVectors.Converters.Wpf"
+             xmlns:ui="clr-namespace:RadioApp.UI"
+             mc:Ignorable="d"
+             FontFamily="Segoe UI Black"
+             d:Background="White"
+             d:DesignHeight="450" d:DesignWidth="1000"
+             x:Name="mainView" >
+    <UserControl.Resources>
+        <drw:GrayscaleImageConverter x:Key="cnvGrayscale" />
+        <cnv:VisibilityConverter x:Key="cnvVisibility" />
+        <cnv:NullVisibilityConverter x:Key="cnvNullVisibility" />
+        <cnv:SubstractConverter x:Key="cnvSub" />
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <vm:MainViewModel />
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:AudioVisualizer Grid.RowSpan="2" Buffer="{Binding CurrentPage}" />
+
+        <ItemsControl ItemsSource="{Binding StatesGeometry}" Margin="30">
+            <ItemsControl.Resources>
+                <DataTemplate DataType="{x:Type draw:PathNode}" >
+                    <Grid>
+                        <i:Interaction.Behaviors>
+                            <beh:MouseChasingBehavior MouseTarget="{Binding ElementName=popup}" TargetOffset="10" />
+                        </i:Interaction.Behaviors>
+                        <Path x:Name="state" Data="{Binding Geometry}" Stroke="{Binding Stroke}" Fill="{Binding Fill}" StrokeThickness="1.5">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="MouseUp">
+                                    <i:InvokeCommandAction Command="{Binding ElementName=mainView, Path=DataContext.StateSelectionCommand}" CommandParameter="{Binding}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </Path>
+                        <Popup x:Name="popup" IsOpen="False" PlacementTarget="{Binding ElementName=state}" Placement="Relative" 
+                               HorizontalOffset="0" VerticalOffset="0" AllowsTransparency="True">
+                            <Grid>
+                                <Border CornerRadius="10" Background="White" BorderBrush="Black" BorderThickness="2" Margin="10">
+                                    <Border.Effect>
+                                        <DropShadowEffect />
+                                    </Border.Effect>
+                                    <StackPanel Margin="10">
+                                        <TextBlock FontFamily="Segoe UI">
+                                            State: <Run Text="{Binding Title, Mode=OneWay}" />
+                                            <LineBreak />
+                                            Stations count: <Run Text="{Binding Count, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                            <!--<Grid>
+                                <Rectangle Margin="10" Fill="Black" Width="100" Height="100" />
+                            </Grid>-->
+                        </Popup>
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="state" Property="Path.Fill" Value="LightBlue" />
+                            <Setter TargetName="popup" Property="Popup.IsOpen" Value="true" />
+                        </Trigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </ItemsControl.Resources>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <svg:SvgBitmap Grid.RowSpan="2" UriSource="/Image/radio.svg" Margin="20" Width="70"
+                       HorizontalAlignment="Right" VerticalAlignment="Bottom" />
+
+        <svg:SvgBitmap Grid.Column="1" Grid.RowSpan="2" Margin="0 10" UriSource="/Image/vertical_line.svg" Width="3" Stretch="Fill"
+                       HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+
+        <!--<Border Grid.Column="1" Grid.RowSpan="2" Margin="0 10" Width="2" VerticalAlignment="Stretch" HorizontalAlignment="Center"
+                BorderThickness="2" BorderBrush="Black" />-->
+
+        <Grid Grid.Column="2" Margin="10" Visibility="{Binding IsLoading, Converter={StaticResource cnvVisibility}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock FontSize="20">
+                Selected state: <Run Text="{Binding SelectedStateName}" d:Text="Kherson" />
+            </TextBlock>
+
+            <svg:SvgBitmap Grid.Row="1" UriSource="/Image/horizontal_line.svg" Height="3" Stretch="Fill"
+                           HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+
+            <!--<Border Grid.Row="1" Margin="-8 2 0 2" Height="2" VerticalAlignment="Center" HorizontalAlignment="Stretch"
+                    BorderThickness="2" BorderBrush="Black" />-->
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Grid.Row="2" Style="{StaticResource simpleScrollViewer}">
+                <ItemsControl ItemsSource="{Binding Stations, Mode=OneWay}" d:ItemsSource="{d:SampleData ItemCount=20}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type rlib:Station}">
+                            <Border x:Name="brdr" Margin="3" Background="White" CornerRadius="2">
+                                <Grid Margin="3">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid Width="32" Height="32">
+                                        <svg:SvgBitmap UriSource="/Image/border.svg" Width="32" Height="32"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <Image Source="{Binding Icon, Mode=OneWay}" RenderOptions.BitmapScalingMode="HighQuality" Width="24" Height="24" Stretch="Uniform" />
+                                    </Grid>
+
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="10 0 0 0">
+                                        <Run Text="{Binding Title, Mode=OneWay}" /> [<Run Text="{Binding Stations.Count, Mode=OneWay}" />]
+                                    </TextBlock>
+
+                                    <ToggleButton x:Name="btnRadioList" Grid.Column="2" VerticalAlignment="Center" 
+                                                  Margin="5 0" Width="20" Style="{StaticResource simpleToggleButton}" />
+
+                                    <Grid Grid.Row="1" Grid.ColumnSpan="3" x:Name="innerList" Visibility="Hidden" d:Visibility="Visible">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.LayoutTransform>
+                                            <ScaleTransform x:Name="innerList_scale" ScaleX="1" ScaleY="0" d:ScaleY="1" />
+                                        </Grid.LayoutTransform>
+
+                                        <svg:SvgBitmap Margin="18 5 0 5" UriSource="/Image/vertical_line.svg" Width="3" Stretch="Fill" 
+                                                       Height="{Binding ActualHeight, ElementName=innerBrdr, Converter={StaticResource cnvSub}, ConverterParameter=12}"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Stretch" />
+
+                                        <Border x:Name="innerBrdr" Grid.Column="1">
+                                            <ItemsControl Grid.Column="1" x:Name="innerIC" ItemsSource="{Binding Stations, Mode=OneWay}" d:ItemsSource="{d:SampleData ItemCount=1}" MinHeight="0">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type rlib:Station}">
+                                                        <Border x:Name="brdr" Margin="3" Background="Transparent" CornerRadius="2">
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="MouseUp">
+                                                                    <i:InvokeCommandAction Command="{Binding ElementName=mainView, Path=DataContext.StationSelectionCommand}" CommandParameter="{Binding}" />
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                            <Grid Margin="4 5">
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition />
+                                                                    <ColumnDefinition Width="Auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition />
+                                                                    <RowDefinition />
+                                                                </Grid.RowDefinitions>
+                                                                <TextBlock Grid.RowSpan="2" VerticalAlignment="Center" Text="{Binding StationName, Mode=OneWay}" />
+
+                                                                <TextBlock Grid.Column="1" Margin="3 0"
+                                                                           HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                                                           Text="{Binding Codec, Mode=OneWay}" FontSize="10" d:Text="MP3" />
+                                                                <TextBlock Grid.Column="1" Grid.Row="1" Margin="3 0" 
+                                                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                                           Text="{Binding Votes, Mode=OneWay}" FontSize="10" d:Text="123" />
+                                                            </Grid>
+                                                        </Border>
+                                                        <DataTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="brdr" Property="Border.Background" Value="#99c4d2" />
+                                                            </Trigger>
+                                                        </DataTemplate.Triggers>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Border>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                            <DataTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="brdr" Property="Border.Background" Value="LightBlue" />
+                                </Trigger>
+                                <Trigger Property="IsChecked" Value="True" SourceName="btnRadioList">
+
+                                    <Trigger.EnterActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Duration="00:00:00.300" From="0" To="1" 
+                                                                 Storyboard.TargetName="innerList"
+                                                                 Storyboard.TargetProperty="(LayoutTransform).(ScaleTransform.ScaleY)" />
+
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="innerList"
+                                                                               Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.0" Value="{x:Static Visibility.Visible}"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.EnterActions>
+
+                                    <Trigger.ExitActions>
+                                        <BeginStoryboard>
+                                            <Storyboard>
+                                                <DoubleAnimation Duration="00:00:00.300" From="1" To="0" 
+                                                                 Storyboard.TargetName="innerList"
+                                                                 Storyboard.TargetProperty="(LayoutTransform).(ScaleTransform.ScaleY)" />
+
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="innerList"
+                                                                               Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.0" Value="{x:Static Visibility.Visible}"/>
+                                                    <DiscreteObjectKeyFrame KeyTime="00:00:00.300" Value="{x:Static Visibility.Hidden}"/>
+                                                </ObjectAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </Trigger.ExitActions>
+                                </Trigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"
+                    Visibility="{Binding IsLoading, Converter={StaticResource cnvVisibility}, ConverterParameter=invert}">
+            <Border Width="120" Height="120" BorderBrush="Black" BorderThickness="1" CornerRadius="20">
+
+            </Border>
+            <TextBlock Text="Loading..." FontSize="20" HorizontalAlignment="Center" />
+        </StackPanel>
+
+        <Grid Grid.Column="2" Grid.Row="1" Margin="10" Height="120" Visibility="{Binding SelectedStation, Converter={StaticResource cnvNullVisibility}}" d:Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
+
+            <Button Width="63" Height="63" Margin="10" DataContext="{Binding}" Command="{Binding PlayCommand}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="SnapsToDevicePixels" Value="true" />
+                        <Setter Property="OverridesDefaultStyle" Value="true" />
+
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Grid>
+                                        <svg:SvgBitmap x:Name="btnPlay" UriSource="/Image/play_btn.svg" RenderTransformOrigin="0.5, 0.5"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                       Visibility="{Binding DataContext.IsRunning, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource cnvVisibility}}" >
+                                            <svg:SvgBitmap.RenderTransform>
+                                                <ScaleTransform x:Name="play_scale" ScaleX="1" ScaleY="1" />
+                                            </svg:SvgBitmap.RenderTransform>
+                                        </svg:SvgBitmap>
+                                        <svg:SvgBitmap x:Name="btnStop" UriSource="/Image/stop_btn.svg" RenderTransformOrigin="0.5, 0.5"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                       Visibility="{Binding DataContext.IsRunning, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource cnvVisibility}, ConverterParameter=invert}">
+                                            <svg:SvgBitmap.RenderTransform>
+                                                <ScaleTransform x:Name="stop_scale" ScaleX="1" ScaleY="1" />
+                                            </svg:SvgBitmap.RenderTransform>
+                                        </svg:SvgBitmap>
+
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" >
+                                                    <Storyboard>
+                                                        <DoubleAnimation Duration="00:00:00.100" To="1" 
+                                                                         Storyboard.TargetName="btnStop"
+                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"/>
+                                                        <DoubleAnimation Duration="00:00:00.100" To="1"
+                                                                         Storyboard.TargetName="btnStop" 
+                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"/>
+
+                                                        <DoubleAnimation Duration="00:00:00.100" To="1" 
+                                                                         Storyboard.TargetName="btnPlay"
+                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"/>
+                                                        <DoubleAnimation Duration="00:00:00.100" To="1"
+                                                                         Storyboard.TargetName="btnPlay" 
+                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"/>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="MouseOver">
+                                                    <Storyboard>
+                                                        <DoubleAnimation Duration="00:00:00.100" To="1.05" 
+                                                                         Storyboard.TargetName="btnStop"
+                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"/>
+                                                        <DoubleAnimation Duration="00:00:00.100" To="1.05"
+                                                                         Storyboard.TargetName="btnStop" 
+                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"/>
+
+                                                        <DoubleAnimation Duration="00:00:00.100" To="1.05" 
+                                                                         Storyboard.TargetName="btnPlay"
+                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"/>
+                                                        <DoubleAnimation Duration="00:00:00.100" To="1.05"
+                                                                         Storyboard.TargetName="btnPlay" 
+                                                                         Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"/>
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Grid>
+                                    <!--<Border x:Name="Border" CornerRadius="20" BorderBrush="Black" BorderThickness="3">
+                                        <Border.Background>
+                                            <SolidColorBrush x:Name="brdrBack" Color="White" />
+                                        </Border.Background>
+                                        <Grid>
+                                            <Path Data="M 8,2 L 34,17 L 8,32 Z" Stroke="Black" StrokeThickness="4" StrokeLineJoin="Round"
+                                                  VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                                  Visibility="{Binding DataContext.IsRunning, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource cnvVisibility}}" />
+
+                                            <Path Data="M 2,2 L 2,27 M 17,2 L 17,27 Z" Stroke="Black" StrokeThickness="4" 
+                                                  StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                                  Visibility="{Binding DataContext.IsRunning, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource cnvVisibility}, ConverterParameter=invert}"/>
+                                        </Grid>-->
+                                    <!--<VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="Normal" >
+                                                    <Storyboard>
+                                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color" Storyboard.TargetName="brdrBack"
+                                                                                      Duration="0:0:.1" FillBehavior="HoldEnd">
+                                                            <EasingColorKeyFrame KeyTime="0:0:.1" Value="White" />
+                                                        </ColorAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="MouseOver">
+                                                    <Storyboard>
+                                                        <ColorAnimationUsingKeyFrames Storyboard.TargetProperty="Color" Storyboard.TargetName="brdrBack"
+                                                                                      Duration="0:0:.1" FillBehavior="HoldEnd">
+                                                            <EasingColorKeyFrame KeyTime="0:0:.1" Value="LightBlue" />
+                                                        </ColorAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>-->
+                                    <!--</Border>-->
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <ui:AudioVisualizer Grid.Column="1" Buffer="{Binding CurrentPage}" />
+
+            <!--<svg:SvgBitmap Grid.Column="1" UriSource="/Image/osci.svg" Margin="10"
+                           HorizontalAlignment="Center" VerticalAlignment="Center" />-->
+
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Margin="20 0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <Grid Width="32" Height="32">
+                    <svg:SvgBitmap UriSource="/Image/border.svg" Width="32" Height="32"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+                    <Image Source="{Binding SelectedStation.Icon}" RenderOptions.BitmapScalingMode="HighQuality" Width="24" Height="24" Stretch="Uniform" VerticalAlignment="Center" />
+                </Grid>
+                <TextBlock Text="{Binding SelectedStation.StationName}" d:Text="Some station FM" Margin="10 0" VerticalAlignment="Center" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

@@ -1,0 +1,6 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <FontFamily x:Key="Inter">pack://application:,,,/Resources/Fonts/#Inter</FontFamily>
+    <FontFamily x:Key="Kitto">pack://application:,,,/Resources/Fonts/Kitto-PersonalUse.otf#Kitto - Personal Use</FontFamily>
+    <FontFamily x:Key="RockSlayers">pack://application:,,,/Resources/Fonts/RockSlayers-BW6Lw.otf#Rock Slayers</FontFamily>
+</ResourceDictionary>
